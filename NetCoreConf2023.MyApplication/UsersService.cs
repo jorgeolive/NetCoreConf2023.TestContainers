@@ -1,0 +1,29 @@
+﻿namespace NetCoreConf2023.BlogApp.Api
+{
+    public record UserDetails(string UserName, string Email);
+
+    /// <summary>
+    /// This is a Third Party Http-based Service (Non-managed service ) 
+    /// </summary>
+    /// 
+    public interface IUsersService
+    {
+        Task<UserDetails> GetDetailsFor(int userId);
+    }
+
+    public class UsersService : IUsersService
+    {
+        private readonly HttpClient _httpClient;
+
+        public UsersService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
+        public async Task<UserDetails> GetDetailsFor(int userId)
+        {
+            //... call Http Endpoint
+            return await Task.FromResult(new UserDetails("joliverd", "j.olive.rodriguez@gmail.com"));
+        }
+    }
+}

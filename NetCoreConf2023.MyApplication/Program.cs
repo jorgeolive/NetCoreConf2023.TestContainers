@@ -4,6 +4,7 @@ using NetCoreConf2023.BlogApp.Api;
 using NetCoreConf2023.BlogApp.EntityFramework;
 using NetCoreConf2023.MyApplication.Models;
 using StackExchange.Redis;
+using System.Net;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddHttpClient();
         builder.Services.AddTransient<IUsersService, UsersService>();
-
 
         builder.Services.AddSingleton<IConnectionMultiplexer>(provider =>
         {

@@ -15,15 +15,17 @@
     {
         private readonly HttpClient _httpClient;
 
-        public UsersService(HttpClient httpClient)
+        public UsersService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri(configuration.GetSection("UsersService:url").Value);
         }
 
         public async Task<UserDetails> GetDetailsFor(int userId)
         {
+            return await _httpClient.GetFromJsonAsync<UserDetails>($"userDetails/{userId}");
             //... call Http Endpoint
-            return await Task.FromResult(new UserDetails("joliverd", "j.olive.rodriguez@gmail.com"));
+            //return await Task.FromResult(new UserDetails("joliverd", "j.olive.rodriguez@gmail.com"));
         }
     }
 }

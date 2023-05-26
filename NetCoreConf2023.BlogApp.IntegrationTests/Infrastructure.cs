@@ -1,6 +1,7 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
+using DotNet.Testcontainers.Images;
 using DotNet.Testcontainers.Networks;
 using Npgsql;
 using Testcontainers.PostgreSql;
@@ -21,6 +22,9 @@ namespace NetCoreConf2023.BlogApp.IntegrationTests
         private INetwork _dockerNetwork;
         public RedisContainer Redis;
         public PostgreSqlContainer PostgreSql;
+        private IFutureDockerImage nginxImage;
+
+        public IContainer NginxContainer { get; }
 
         public Infrastructure()
         {
@@ -36,6 +40,13 @@ namespace NetCoreConf2023.BlogApp.IntegrationTests
             PostgreSql = new PostgreSqlBuilder().
                 WithNetwork(_dockerNetwork).     // No need to provide WaitStrategy, see PostgresqlContainer internals
                 Build();
+
+            nginxImage = new ImageFromDockerfileBuilder().
+                WithDockerfileDirectory(Directory.GetCurrentDirectory()).
+                WithDockerfile("Dockerfile").
+                Build();
+
+             NginxContainer = new ContainerBuilder().WithImage(nginxImage).WithPortBinding(80, true).Build();
         }
 
         public Task DisposeAsync()
@@ -45,8 +56,11 @@ namespace NetCoreConf2023.BlogApp.IntegrationTests
 
         public async Task InitializeAsync()
         {
+            await nginxImage.CreateAsync();
+
             await Redis.StartAsync();
             await PostgreSql.StartAsync();
+            await NginxContainer.StartAsync();
         }
 
         public async Task Reset()

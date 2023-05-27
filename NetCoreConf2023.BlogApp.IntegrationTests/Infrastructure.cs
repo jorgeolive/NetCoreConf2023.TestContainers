@@ -1,5 +1,4 @@
 ﻿using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using DotNet.Testcontainers.Images;
 using DotNet.Testcontainers.Networks;
@@ -8,15 +7,6 @@ using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
 
 namespace NetCoreConf2023.BlogApp.IntegrationTests;
-
-public class RedisWaitStrategy : IWaitUntil
-{
-    public async Task<bool> UntilAsync(IContainer container)
-    {
-        var response = await container.ExecAsync(new List<string> { "redis-cli", "ping" });
-        return response.Stdout.Contains("PONG");
-    }
-}
 public class Infrastructure : IAsyncLifetime
 {
     private IFutureDockerImage _nginxImage;
